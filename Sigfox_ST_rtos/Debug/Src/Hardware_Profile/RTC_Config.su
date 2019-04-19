@@ -1,0 +1,6 @@
+RTC_Config.c:84:6:HAL_RTC_AlarmAEventCallback	0	static
+RTC_Config.c:89:6:RTC_WakeUp_Clear_Flag	0	static
+RTC_Config.c:95:6:Standby_Mode_Entry	16	static
+RTC_Config.c:100:6:RTC_Set_To_Zero_DateTime	32	static
+RTC_Config.c:114:6:setTime	72	static
+RTC_Config.c:21:6:MX_RTC_Init	40	static

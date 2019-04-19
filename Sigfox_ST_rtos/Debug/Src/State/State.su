@@ -1,0 +1,14 @@
+State.c:29:14:State_Sleep	16	static
+State.c:55:14:State_SigfoxInit	16	static
+State.c:141:14:State_SifgoxSaveParameters	16	static
+State.c:262:14:State_SigfoxSendPayload	24	static
+State.c:111:14:State_SigfoxChangeFrequencyDL	8	static
+State.c:325:14:State_Blink	24	static
+State.c:163:14:State_SigfoxCheckModule	16	static
+State.c:183:14:State_SigfoxGetID	16	static
+State.c:205:14:State_SigfoxGetPAC	16	static
+State.c:226:14:State_SigfoxCheckChannels	16	static
+State.c:247:14:State_SigfoxResetChannels	16	static
+State.c:93:14:State_SigfoxChangeFrequency	16	static
+State.c:14:6:State_Failure	8	static
+State.c:22:6:BeforeAny	0	static

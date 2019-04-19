@@ -1,0 +1,8 @@
+Globals.c:34:6:RSTCtrl_Sigfox	8	static
+Globals.c:38:6:RST2Ctrl_Sigfox	8	static
+Globals.c:44:6:UART_DEBUG	0	static
+Globals.c:49:6:UART_SIGFOX_TX_STM	16	static
+Globals.c:54:15:UART_SIGFOX_RX_STM	0	static
+Globals.c:69:6:PrintString	16	static
+Globals.c:75:6:PrintStringVar	32	dynamic
+Globals.c:86:11:DiscrimateFrameType	0	static
