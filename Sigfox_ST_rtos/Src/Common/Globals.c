@@ -22,7 +22,8 @@ SemaphoreHandle_t SemRxUart = NULL ;
 QueueHandle_t xQueueTx = NULL;
 QueueHandle_t xQueueRx = NULL;
 
-
+TaskHandle_t xTaskHandleRx = NULL;
+BaseType_t xHigherPriorityTaskWoken = pdFALSE;
  /** otros */
 volatile uint8_t FlagCont=0;
 uint8_t ReportTimeHour = 0;

@@ -940,6 +940,8 @@ HAL_StatusTypeDef HAL_UART_Receive_IT(UART_HandleTypeDef *huart, uint8_t *pData,
     __HAL_LOCK(huart);
 
     huart->pRxBuffPtr = pData;
+   // xSemaphoreGiveFromISR( SemFSM, &xHigherPriorityTaskWoken );
+   //xTaskNotifyFromISR(xTaskHandleRx,0,eNoAction,&xHigherPriorityTaskWoken);
     huart->RxXferSize = Size;
     huart->RxXferCount = Size;
 
@@ -948,6 +950,7 @@ HAL_StatusTypeDef HAL_UART_Receive_IT(UART_HandleTypeDef *huart, uint8_t *pData,
 
     huart->ErrorCode = HAL_UART_ERROR_NONE;
     huart->RxState = HAL_UART_STATE_BUSY_RX;
+
 
     /* Process Unlocked */
     __HAL_UNLOCK(huart);
@@ -958,7 +961,7 @@ HAL_StatusTypeDef HAL_UART_Receive_IT(UART_HandleTypeDef *huart, uint8_t *pData,
     /* Enable the UART Parity Error and Data Register not empty Interrupts */
     SET_BIT(huart->Instance->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE);
 
-    return HAL_OK;
+    return xHigherPriorityTaskWoken;
   }
   else
   {

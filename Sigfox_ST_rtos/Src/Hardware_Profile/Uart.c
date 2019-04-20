@@ -89,21 +89,24 @@ void MX_USART2_UART_Init(void)
 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 
-	static BaseType_t xHigherPriorityTaskWoken;
-	xHigherPriorityTaskWoken = pdFALSE;
+	//static BaseType_t xHigherPriorityTaskWoken;
+	//xHigherPriorityTaskWoken = pdFALSE;
 	uint8_t x = 255;
 
 	if(huart->Instance == USART1){
+		taskENTER_CRITICAL();
 		SigfoxISRRX(&SigfoxModule); /*almacena datos en el buffer recepcion*/
-
+		taskEXIT_CRITICAL();
 		HAL_UART_Receive_IT( &huart1,(uint8_t *)&UART_RX.Data,USART_RX_AMOUNT_BYTES);
 
 		/* Unblock the task by releasing the semaphore. */
-		if(pdTRUE != xQueueSendFromISR(xQueueTx , &x,xHigherPriorityTaskWoken) ){	}
-		//xSemaphoreGiveFromISR( SemTxUart, &xHigherPriorityTaskWoken );
+		//if(pdTRUE != xQueueSendFromISR(xQueueTx , &x,&xHigherPriorityTaskWoken) ){	}
+
+		//xTaskNotifyFromISR(xTaskHandleRx,0,eNoAction,&xHigherPriorityTaskWoken);
+		if(SigfoxModule.RxReady ) xSemaphoreGiveFromISR( SemFSM, &xHigherPriorityTaskWoken );
 	}
   /* If xHigherPriorityTaskWoken was set to true you we should yield.  The actual macro used here is    port specific. */
-	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+	if(xHigherPriorityTaskWoken) portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 }
 /*
  ===================================================================================

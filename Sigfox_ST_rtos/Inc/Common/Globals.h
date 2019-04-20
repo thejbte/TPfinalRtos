@@ -79,6 +79,8 @@ extern SemaphoreHandle_t SemFSM ;
 extern SemaphoreHandle_t SemRxUart ;
 extern QueueHandle_t xQueueTx;
 extern QueueHandle_t xQueueRx;
+extern TaskHandle_t xTaskHandleRx;
+BaseType_t xHigherPriorityTaskWoken;
 
 /********************Other Variables ***********************/
 extern volatile uint8_t wakeup;

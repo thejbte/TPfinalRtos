@@ -119,7 +119,7 @@ void SysTick_Handler(void)
   HAL_IncTick();
   osSystickHandler();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-  HAL_SYSTICK_IRQHandler(); // No se si me afecte en Freertos
+ // HAL_SYSTICK_IRQHandler(); // No se si me afecte en Freertos
   /* USER CODE END SysTick_IRQn 1 */
 }
 
@@ -138,6 +138,7 @@ void RTC_IRQHandler(void)
   /* USER CODE BEGIN RTC_IRQn 0 */
 
   /* USER CODE END RTC_IRQn 0 */
+
   HAL_RTC_AlarmIRQHandler(&hrtc);
   /* USER CODE BEGIN RTC_IRQn 1 */
 

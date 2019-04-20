@@ -1268,6 +1268,8 @@ typedef struct
 
 /* Include UART HAL Extended module */
 #include "stm32f0xx_hal_uart_ex.h"
+#include "main.h"
+#include "cmsis_os.h"
 
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup UART_Exported_Functions UART Exported Functions

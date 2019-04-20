@@ -43,6 +43,8 @@ osThreadId defaultTaskHandle;
 
 void StartDefaultTask(void const * argument);
 
+
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -58,41 +60,40 @@ void TaskTxUartDebug ( void* taskParmPtr);
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
+ * @brief  The application entry point.
+ * @retval int
+ */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
-  /* USER CODE END 1 */
+	/* USER CODE BEGIN 1 */
+	/* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
+	/* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	HAL_Init();
 
-  /* USER CODE BEGIN Init */
+	/* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
+	/* USER CODE END Init */
 
-  /* Configure the system clock */
-  SystemClock_Config();
+	/* Configure the system clock */
+	SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
+	/* USER CODE BEGIN SysInit */
 
-  /* USER CODE END SysInit */
+	/* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_RTC_Init();
-  MX_USART1_UART_Init();
-  MX_USART2_UART_Init();
-  /* USER CODE BEGIN 2 */
+	/* Initialize all configured peripherals */
+
+	/* USER CODE BEGIN 2 */
 	MX_GPIO_Init();
 	MX_RTC_Init();
 	MX_USART1_UART_Init();
 	MX_USART2_UART_Init();
 	HAL_UART_Receive_IT(&huart1,(uint8_t *)&UART_RX.Data,USART_RX_AMOUNT_BYTES);
+
+
 
 	/*ANTIREBOTE*/
 	Debounce_Init(&Fsm_DebounceData,40, PULL_DOWN);
@@ -101,7 +102,7 @@ int main(void)
 
 
 	/*Task Create*/
-	xTaskCreate(TaskFSM, (const char *)"TaskFSM",configMINIMAL_STACK_SIZE*2, NULL, tskIDLE_PRIORITY + 1, NULL);
+	xTaskCreate(TaskFSM, (const char *)"TaskFSM",configMINIMAL_STACK_SIZE*2, NULL, tskIDLE_PRIORITY + 1, &xTaskHandleRx);
 	//xTaskCreate(TaskReceiveUart, (const char *)"TaskFSM",configMINIMAL_STACK_SIZE*2, NULL, tskIDLE_PRIORITY + 2, NULL);
 	xTaskCreate(TaskTxUartDebug, (const char *)"TaskTxUartDebug",configMINIMAL_STACK_SIZE*2, NULL, tskIDLE_PRIORITY + 1, NULL);
 
@@ -124,52 +125,55 @@ int main(void)
 	//qSchedulerSetup(0.001, IdleTask_Callback, 0);
 	//qSchedulerAddSMTask(&Task_ApplicationFSM, MEDIUM_Priority, 0.1, &StateMachine_ApplicationFSM, State_SigfoxInit, NULL, NULL, State_Failure, NULL, qEnabled, NULL);
 	//qSchedulerRun();
-  /* USER CODE END 2 */
+	/* USER CODE END 2 */
 
-  /* USER CODE BEGIN RTOS_MUTEX */
+	/* USER CODE BEGIN RTOS_MUTEX */
 	/* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
+	/* USER CODE END RTOS_MUTEX */
 
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
+	/* USER CODE BEGIN RTOS_SEMAPHORES */
 	SemTxUart = xSemaphoreCreateBinary();
-	//SemFSM = xSemaphoreCreateBinary();
+	SemFSM = xSemaphoreCreateBinary();
+	SemRxUart = xSemaphoreCreateMutex();
 	/* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
+	/* USER CODE END RTOS_SEMAPHORES */
 
-  /* USER CODE BEGIN RTOS_TIMERS */
+	/* USER CODE BEGIN RTOS_TIMERS */
 	/* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
+	/* USER CODE END RTOS_TIMERS */
 
-  /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  //osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
- // defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+	/* Create the thread(s) */
+	/* definition and creation of defaultTask */
+	//osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+	// defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
-  /* USER CODE BEGIN RTOS_THREADS */
+	/* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
+	/* USER CODE END RTOS_THREADS */
 
-  /* USER CODE BEGIN RTOS_QUEUES */
+	/* USER CODE BEGIN RTOS_QUEUES */
+
 	xQueueTx = xQueueCreate(1 , sizeof(uint8_t));
-	//xQueueRx = xQueueCreate(1 , sizeof(uint8_t));
-  /* USER CODE END RTOS_QUEUES */
- 
 
-  /* Start scheduler */
-  osKernelStart();
-  
-  /* We should never get here as control is now taken by the scheduler */
+	xQueueRx = xQueueCreate(1 , sizeof(uint8_t));
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
+	/* USER CODE END RTOS_QUEUES */
+
+
+	/* Start scheduler */
+	osKernelStart();
+
+	/* We should never get here as control is now taken by the scheduler */
+
+	/* Infinite loop */
+	/* USER CODE BEGIN WHILE */
 	while (1)
 	{
-    /* USER CODE END WHILE */
-		//PrintString(&huart2, "Hola\r\n");
-		for(volatile int i=0; i<100000;i++){}
-    /* USER CODE BEGIN 3 */
+		/* USER CODE END WHILE */
+
+		/* USER CODE BEGIN 3 */
 	}
-  /* USER CODE END 3 */
+	/* USER CODE END 3 */
 }
 
 
@@ -186,14 +190,27 @@ void TaskFSM( void* taskParmPtr){
 	uint8_t x = 2;
 	for(;;){
 
-		 vTaskDelayUntil( &xLastWakeTime, 1000/ portTICK_RATE_MS);
-		if(pdTRUE != xQueueSend(xQueueTx , &x,1000) ){
-			/*Fail send to queue*/
-		}
-		x++;
-		/*PrintString(&huart2, SigfoxModule.RxFrame);
-		SigfoxModule.RxReady = 0;*/
+		//vTaskDelayUntil( &xLastWakeTime, 100/ portTICK_RATE_MS);
+
+		if(pdTRUE != xQueueSend(xQueueTx , &x,portMAX_DELAY) ){ 	/*Fail send to queue*/	}
+
+		/*Libero el semaforo para que TaskReceiveUart reciba el dato por la  cola xQueueTx*/
 		xSemaphoreGive(SemTxUart);
+
+		//	xTaskNotifyWait(0,0,NULL,portMAX_DELAY);
+
+		if( pdTRUE == xSemaphoreTake(SemFSM,portMAX_DELAY) )  /*Se libera cuando llega un mensaje por Int uart*/
+		{
+			//taskENTER_CRITICAL();
+			x++;
+			//taskEXIT_CRITICAL();
+			//xSemaphoreTake(SemRxUart,portMAX_DELAY) ; // se cuelga por el portmaxdelay
+			//PrintString(&huart2, SigfoxModule.RxFrame);
+			//xSemaphoreGive(SemRxUart);
+			//PrintString(&huart2,(uint8_t*)SigfoxModule.RxFrame);
+			SigfoxModule.RxReady = 0;
+		}
+
 	}
 }
 
@@ -209,11 +226,13 @@ void TaskTxUartDebug ( void* taskParmPtr){
 	uint8_t RxQueue = 0;
 	for(;;){
 		HAL_GPIO_WritePin(GPIOB, LED_Pin, !HAL_GPIO_ReadPin(GPIOB, LED_Pin));
-
+		/*tomo semaforo, lo libera cuando se llega mensaje por uart int*/
 		if( pdTRUE == xSemaphoreTake(SemTxUart,portMAX_DELAY) ){ 			// 3000/portTICK_RATE_MS
-			if( pdTRUE == xQueueReceive(xQueueTx , &RxQueue,1000) ){
+			if( pdTRUE == xQueueReceive(xQueueTx , &RxQueue,1000) )
+			{
 				sprintf((char*) vec,"data Receive %d\r\n",RxQueue);
 				PrintString(&huart2, vec);
+				//PrintString(&huart2,(uint8_t*)SigfoxModule.RxFrame);
 			}else PrintString(&huart2, (uint8_t *)"fail to receive\r");
 		}
 	}
@@ -230,41 +249,41 @@ void TaskTxUartDebug ( void* taskParmPtr){
 void StartDefaultTask(void const * argument)
 {
 
-  /* USER CODE BEGIN 5 */
+	/* USER CODE BEGIN 5 */
 	/* Infinite loop */
 	for(;;)
 	{
 		osDelay(1);
 	}
-  /* USER CODE END 5 */ 
+	/* USER CODE END 5 */
 }
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
 void Error_Handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
+	/* USER CODE BEGIN Error_Handler_Debug */
 	/* User can add his own implementation to report the HAL error return state */
 
-  /* USER CODE END Error_Handler_Debug */
+	/* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef  USE_FULL_ASSERT
 /**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
+ * @brief  Reports the name of the source file and the source line number
+ *         where the assert_param error has occurred.
+ * @param  file: pointer to the source file name
+ * @param  line: assert_param error line source number
+ * @retval None
+ */
 void assert_failed(char *file, uint32_t line)
 { 
-  /* USER CODE BEGIN 6 */
+	/* USER CODE BEGIN 6 */
 	/* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
+	/* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
 
