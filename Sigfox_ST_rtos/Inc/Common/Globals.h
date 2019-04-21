@@ -1,7 +1,7 @@
 /*
  * Globals.h
  *
- *  Created on: 30/01/2019
+ *  Created on: 01/04/2019
  *      Author: julian
  */
 
@@ -19,9 +19,6 @@
 #include "string.h"
 #include "stdint.h"
 
-#include "../Inc/Kernel/QuarkTS.h"
-#include "../Inc/Task/Task.h"
-#include "../Inc/State/State.h"
 
 #include "../Inc/SystemClock_Config.h"
 #include "../Inc/Common/Event.h"
@@ -54,9 +51,6 @@
 #endif
 
 
-
-
-
 /** Error */
 #define WRAPER_ERR_OK	0X00U /* OK*/
 
@@ -69,19 +63,34 @@
 void PrintString(UART_HandleTypeDef *huart,uint8_t *pData);
 void PrintStringVar(UART_HandleTypeDef *huart,uint8_t *pData, uint16_t * ptr);
 /***************Scheduler*****************************/
-qTask_t Task_ApplicationFSM;
-qSM_t StateMachine_ApplicationFSM;
-extern  qSTimer_t Timeout;
+
 
 /*Free rtos*/
 extern SemaphoreHandle_t SemTxUart ;
 extern SemaphoreHandle_t SemFSM ;
-extern SemaphoreHandle_t SemRxUart ;
+extern SemaphoreHandle_t SemUart ;
 extern QueueHandle_t xQueueTx;
 extern QueueHandle_t xQueueRx;
-extern TaskHandle_t xTaskHandleRx;
+extern TaskHandle_t xTaskHandle_DL_RxNotify;
 BaseType_t xHigherPriorityTaskWoken;
 
+
+/*fsm rtos*/
+typedef enum{
+	STATE_SLEEP = 0,
+	STATE_SIGFOXINIT,
+	STATE_SIGFOXCHECKMODULE,
+	STATE_SIGFOXCHECKCHANNELS,
+	STATE_SIGFOXRESETCHANNELS,
+	STATE_SIGFOXSENDPAYLOAD,
+	STATE_SIGFOXCHANGEFREQUENCY,
+	STATE_SIFGOXSAVEPARAMETERS,
+	STATE_SIGFOXGETID,
+	STATE_SIGFOXGETPAC,
+	STATE_BLINK,
+	STATE_SIGFOXCHANGEFREQUENCYDL,
+	STATE_SIGFOXGETVOLTBATERRY,
+}FSM_States_t;
 /********************Other Variables ***********************/
 extern volatile uint8_t wakeup;
 extern volatile uint8_t FlagCont;
@@ -154,50 +163,13 @@ extern DataFrame_t DataFrame;
 
 /**************************Flags globals*******************************************************/
 
-typedef struct {
-	union{
-		uint16_t Flags;
-		struct{
-			unsigned GPS_NO_ADQUISITION  :1;
-			unsigned GPSAttached		 :1;
-			unsigned estado_actual		 :1;
-			unsigned flag_FirstEntry     :1;
-			unsigned System_Init	     :1;
-			unsigned flag_ON_WAKEUP_TIME :1;
-			unsigned Flag_button         :1;
-			unsigned FLAG_Coma_OK        :1;
-			unsigned flag_nibble         :1;
-			unsigned DL_Power_ON		 :1;
-			unsigned msgADC		         :1;
-			unsigned msgGPS			     :1;
-			unsigned CoordInside		 :1;
-			unsigned Flag_Encendido_Moto :1;
-			unsigned promedioTemp		 :1;
-			unsigned Histeresis          :1;
-		};
-	};
-}Flags_t;
-
-extern volatile Flags_t Flags_globals;
 
 /**************************tipos de datos a enviar*******************************************************/
 
 typedef enum{
 	iButton,
 	iButton_track,
-	iButton_TH,
-	iButton_track_TH,
 
-	Event_battery_cuted_moto=17,
-
-	Event_off_on_reed_switch=25,
-	Event_on_off_reed_switch=26,
-	Event_off_reed_switch=27,
-	Event_on_reed_switch=28,
-
-	iButto_logger_NTC=30,
-	Event_out_geofence=31,
-	Event_prueba_ganado=23
 }Types_t;
 
 typedef struct{

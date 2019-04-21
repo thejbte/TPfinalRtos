@@ -1,7 +1,7 @@
 /*
  * Globals.c
  *
- *  Created on: 30/01/2019
+ *  Created on: 01/04/2019
  *      Author: julian
  */
 
@@ -12,17 +12,16 @@
 DebounceData_t Fsm_DebounceData;
 volatile Debounce_Flag_t Debounce_Flag;
 
-/** Scheduler */
-qSTimer_t Timeout = QSTIMER_INITIALIZER;
+
 
 /*frertos*/
 SemaphoreHandle_t SemTxUart = NULL;
 SemaphoreHandle_t SemFSM = NULL;
-SemaphoreHandle_t SemRxUart = NULL ;
+SemaphoreHandle_t SemUart = NULL ;
 QueueHandle_t xQueueTx = NULL;
 QueueHandle_t xQueueRx = NULL;
 
-TaskHandle_t xTaskHandleRx = NULL;
+TaskHandle_t xTaskHandle_DL_RxNotify = NULL;
 BaseType_t xHigherPriorityTaskWoken = pdFALSE;
  /** otros */
 volatile uint8_t FlagCont=0;
@@ -61,7 +60,7 @@ unsigned char UART_SIGFOX_RX_STM( unsigned char * Chr){
 DataFrame_t DataFrame;
 
 /*flags globales*/
-volatile Flags_t Flags_globals;
+
 
 /*Tipo de datos*/
 tipo_t xtypes;
@@ -84,6 +83,7 @@ void PrintStringVar(UART_HandleTypeDef *huart,uint8_t *pData, uint16_t * ptr){
 	}
 }
 
+/*Función decodificar trama de Downlink*/
 DL_Return DiscrimateFrameType(SigfoxConfig_t *obj){
 	uint16_t tempReg;
 
@@ -92,7 +92,7 @@ DL_Return DiscrimateFrameType(SigfoxConfig_t *obj){
 
         case DL_FRAME_REPORT_TIME_AND_TURN_OFF_MOTO:
             tempReg = (obj->DL_NumericFrame[DL_TREP] << 8) | obj->DL_NumericFrame[DL_TREP + 1]; 	/* junto los 2 bytes en 1*/
-            //Flags_globals.DL_Power_ON = numericFrame[DL_P_ON_OFF] <= 0 ? 0 :1;
+            HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,obj->DL_NumericFrame[DL_P_ON_OFF] <= 0 ? 0 :1);
             if(tempReg >= DL_MIN_REPORT_TIME){
               if(tempReg != obj->UL_ReportTimeS){ /*Si el dato es diferente*/
             	  obj->UL_ReportTimeS = tempReg;

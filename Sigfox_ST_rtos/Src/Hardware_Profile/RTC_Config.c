@@ -1,7 +1,7 @@
 /*
  * RTC_Config.c
  *
- *  Created on: 30/01/2019
+ *  Created on: 01/04/2019
  *      Author: julian
  */
 #include <Hardware_Profile/RTC_Config.h>
@@ -72,7 +72,7 @@ void MX_RTC_Init(void)
 	  /**Enable the Alarm A
 	  */
 	  /*H:0-23 , M: 0-59 S: 0-59*/
-	   ReportTimeHour = 1;
+	   ReportTimeMinute = 3;
 
 	   setTime(ReportTimeHour,ReportTimeMinute,ReportTimeSecond); //SigfoxModule.UL_ReportTimeS);
 	  /* USER CODE BEGIN RTC_Init 2 */
@@ -83,7 +83,7 @@ void MX_RTC_Init(void)
 
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc){
 
-	Flags_globals.flag_ON_WAKEUP_TIME = 1;
+	//Flags_globals.flag_ON_WAKEUP_TIME = 1;
 }
 
 void RTC_WakeUp_Clear_Flag(RTC_HandleTypeDef *hrtc){

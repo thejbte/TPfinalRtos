@@ -1,7 +1,7 @@
 /*
  * Event.c
  *
- *  Created on: 1/02/2019
+ *  Created on: 01/04/2019
  *      Author: julian
  */
 
@@ -14,16 +14,7 @@ void HAL_SYSTICK_Callback(void)
             the HAL_SYSTICK_Callback could be implemented in the user file
            	   Se debe incluir en stm32l0xx_it  HAL_SYSTICK_IRQHandler
    */
-
-	qSchedulerSysTick();
+	//qSchedulerSysTick();
 	Debounce_Update(&Fsm_DebounceData, HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13));
-
-
-
-
-
-	volatile static uint32_t contador=0;
-	contador++;
-	if(contador>10000){contador=0; FlagCont=1;}
 
 }

@@ -1,9 +1,9 @@
 /*!
  * *******************************************************************************
  * @file Sigfox.h
- * @author modified by julian bustamante
+ * @author julian bustamante
  * @version 1.2.0
- * @date Mar 27, 2019
+ * @date 03/04/2019
  * @brief Sigfox interface for the sigfox module. Interface
  * specific for module wisol SFM11R2D.
  *********************************************************************************/
@@ -36,7 +36,7 @@
 #define DL_TIMEOUT 45//60.0
 
 /** Minimum report time --> 10.285 min*/
-#define DL_MIN_REPORT_TIME 617
+#define DL_MIN_REPORT_TIME 10 //617 s
 
 /** Downlink request period maximun*/
 #define DL_REQ_PERIOD_TRANSMISSION_MAX_DAY 4
@@ -60,7 +60,7 @@
 /* Numeric frame offsets ---------------------------------------------------------*/
 #define DL_CTRLREG 0
 #define DL_TREP 2
-#define DL_P_ON_OFF  4 /*turn on off moto*/
+#define DL_P_ON_OFF  4 /*turn on off */
 
 
 
@@ -185,7 +185,7 @@ typedef enum{
 /*================================================================================
  *   prototypes
  *================================================================================*/
-
+void SigfoxResetObject(SigfoxConfig_t *obj);
 /**
  * @brief Function initialize the Sigfox module.
  * @param obj Structure containing all data from the Sigfox module.

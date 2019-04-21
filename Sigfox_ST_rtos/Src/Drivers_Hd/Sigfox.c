@@ -1,9 +1,9 @@
 /*!
  * *******************************************************************************
  * @file Sigfox.c
- * @author modified by julian bustamante
+ * @author julian bustamante
  * @version 1.2.0
- * @date Mar 27, 2019
+ * @date 03/04/2019
  * @brief Sigfox interface for the sigfox module. Interface
  * specific for module wisol SFM11R2D.
  *********************************************************************************/
@@ -15,7 +15,7 @@
 static void SigfoxStringTX(SigfoxConfig_t *obj, char* SigfoxString);
 
 /*Funcion Limpia buffer y ready */
-static void SigfoxResetObject(SigfoxConfig_t *obj);
+//static void SigfoxResetObject(SigfoxConfig_t *obj);
 
 /*Funcion arma trama deacuerdo a la estructura de datos 12 bytes*/
 static void SigfoxBuildFrame(char* str, void* data, uint8_t size);
@@ -344,8 +344,7 @@ DL_Return DL_DiscriminateDownLink(SigfoxConfig_t* obj){
         byteIndex += DL_BYTES_OFFSET;
     }
 
-
-    return ( NULL != obj->DiscrimateFrameTypeFcn )? obj->DiscrimateFrameTypeFcn(obj) : DL_DISCRIMINATE_ERROR;
+return ( NULL != obj->DiscrimateFrameTypeFcn )? obj->DiscrimateFrameTypeFcn(obj) : DL_DISCRIMINATE_ERROR;
 }
 
 /**
