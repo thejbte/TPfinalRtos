@@ -1,6 +1,5 @@
-main.c:307:6:TaskTxUart	48	static
-main.c:173:6:TaskFSM	80	static
-main.c:272:6:TaskDL_DecoFrame	16	static
-main.c:64:5:main	32	static
-main.c:335:6:StartDefaultTask	8	static
-main.c:351:6:Error_Handler	0	static
+main.c:162:6:TaskTxUart	48	static
+main.c:92:6:TaskFSM	64	static
+main.c:137:6:TaskDL_DecoFrame	16	static
+main.c:26:5:main	32	static
+main.c:183:6:Error_Handler	0	static

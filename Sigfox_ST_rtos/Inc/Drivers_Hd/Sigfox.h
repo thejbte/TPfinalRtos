@@ -55,7 +55,7 @@
 
 /* Frame types -------------------------------------------------------------------*/
 #define DL_FRAME_REPORT_TIME  4
-#define DL_FRAME_REPORT_TIME_AND_TURN_OFF_MOTO  5
+#define DL_FRAME_REPORT_TIME_AND_TURN_OFF_OBJECT  5
 
 /* Numeric frame offsets ---------------------------------------------------------*/
 #define DL_CTRLREG 0
@@ -115,13 +115,13 @@ typedef unsigned char (*RxFnc_t)(unsigned char*);
  * @brief Return codes for downlink operation.
  */
 typedef enum{
-   DL_SUCCESS,      /* Downlink successfully processed */
-   DL_HEAD_ERROR,   /* Could not find RX */
-   DL_TAIL_ERROR,   /* Could not find \r */
-   DL_LENGTH_ERROR, /* Wrong length */
-   DL_TIME_OK,		/*Time success*/
-   DL_UNKNOWN,
-   DL_DISCRIMINATE_ERROR
+	DL_SUCCESS,      /* Downlink successfully processed */
+	DL_HEAD_ERROR,   /* Could not find RX */
+	DL_TAIL_ERROR,   /* Could not find \r */
+	DL_LENGTH_ERROR, /* Wrong length */
+	DL_TIME_OK,		/*Time success*/
+	DL_UNKNOWN,
+	DL_DISCRIMINATE_ERROR
 } DL_Return;
 
 typedef struct SigfoxConfig{
@@ -149,13 +149,13 @@ typedef struct SigfoxConfig{
  * @brief Return codes for Uplink operation.
  */
 typedef enum{
-SIGFOX_INIT_OK = 0,
-SIFOX_INIT_FAILED,			/*1*/
-SIGFOX_PROCESS_SUCCED,		/*2*/
-SIGFOX_PROCESS_FAILED, 		/*3*/
-SIGFOX_CHANN_OK, 			/*4*/
-SIGFOX_CHANN_NO_OK, 		/*5*/
-SIGFOX_DEFAULT = 255
+	SIGFOX_INIT_OK = 0,
+	SIFOX_INIT_FAILED,			/*1*/
+	SIGFOX_PROCESS_SUCCED,		/*2*/
+	SIGFOX_PROCESS_FAILED, 		/*3*/
+	SIGFOX_CHANN_OK, 			/*4*/
+	SIGFOX_CHANN_NO_OK, 		/*5*/
+	SIGFOX_DEFAULT = 255
 }ULReturn;
 
 

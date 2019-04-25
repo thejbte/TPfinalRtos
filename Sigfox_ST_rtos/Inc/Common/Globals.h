@@ -29,6 +29,7 @@
 #include "cmsis_os.h"
 
 /*Definition */
+
 //#define Once_Bytes
 #define Doce_Bytes
 
@@ -41,8 +42,6 @@
 /*Wrap */
 #define iButton_Data DataFrame
 
-
-/*MAX_SIZE_IBUTTON_DATA sendpayload*/
 
 #ifdef _11_BYTES
 #define MAX_SIZE_IBUTTON_DATA	11
@@ -58,10 +57,14 @@
 #define USART_TIMEOUT		500
 #define USART_RX_AMOUNT_BYTES	1
 #define USART_TX_AMOUNT_BYTES	1
+
 /** *UASRT2  */
 #define UART_SIGFOX_TX_DEBUG_STM	UART_DEBUG
+
+/*Prototipos defunciones para transmitir a la uart*/
 void PrintString(UART_HandleTypeDef *huart,uint8_t *pData);
 void PrintStringVar(UART_HandleTypeDef *huart,uint8_t *pData, uint16_t * ptr);
+
 /***************Scheduler*****************************/
 
 
@@ -116,23 +119,7 @@ extern DebounceData_t Fsm_DebounceData;
 /**************************** Data Sigfox *****************************/
 typedef struct {
 
-
 #ifdef Once_Bytes
-	union {
-		uint8_t Others[3];
-		struct {
-			unsigned ADC_12 :12;   /*Canal AN 12 bits*/
-			unsigned DUMMY	:12; 	/*N/A*/
-		};
-		struct {
-			unsigned ADC_0:8;	/*Canal AN 8 bits*/
-			unsigned ADC_1:8;	/*Canal AN 8 bits*/
-			unsigned DI:1; 						// DI  LSB en el orden que lo coloque acá  DI, BattLow, Type  hacia abajo
-			unsigned BattLow:1;
-			unsigned Type:5;
-			unsigned periodic:1;
-		};
-	}Once_Bytes;
 #endif
 
 #ifdef Doce_Bytes
@@ -147,7 +134,7 @@ typedef struct {
 		struct {
 			unsigned ADC_0:12;		/*Canal AN 12 bits*/
 			unsigned ADC_1:12;		/*Canal AN 12 bits*/
-			unsigned DI:1; 						// DI  LSB en el orden que lo coloque acá  DI, BattLow, Type  hacia abajo
+			unsigned DI:1; 		     // DI  LSB en el orden que lo coloque acá  DI, BattLow, Type  hacia abajo
 			unsigned BattLow:1;
 			unsigned Type:5;
 			unsigned periodic:1;
@@ -161,24 +148,26 @@ typedef struct {
 
 extern DataFrame_t DataFrame;
 
-/**************************Flags globals*******************************************************/
-
-
 /**************************tipos de datos a enviar*******************************************************/
 
 typedef enum{
 	iButton,
 	iButton_track,
-
 }Types_t;
 
 typedef struct{
 	Types_t xtype;
 }tipo_t;
 extern tipo_t xtypes;
-/*********************************************************************************/
+
+/***************************Prototipo Dfunción decodificar Frame******************************************************/
 DL_Return DiscrimateFrameType(SigfoxConfig_t *obj);
 
+/*Prototipo Función Trnasmite por Debug protegida por mutex**********************************/
+void UartprotectedMutex(UART_HandleTypeDef *huart, SemaphoreHandle_t Semaph, uint8_t* Str);
+
+
+uint8_t FSM_Send_Command(uint8_t state, uint8_t *FlagEnd,uint8_t* DowlinkAux, char* x);
 #endif /* GLOBALS_H_ */
 
 

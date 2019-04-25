@@ -6,3 +6,5 @@ Globals.c:54:15:UART_SIGFOX_RX_STM	0	static
 Globals.c:69:6:PrintString	16	static
 Globals.c:75:6:PrintStringVar	32	dynamic
 Globals.c:87:11:DiscrimateFrameType	16	static
+Globals.c:114:6:UartprotectedMutex	16	static
+Globals.c:122:9:FSM_Send_Command	48	static
