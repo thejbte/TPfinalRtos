@@ -7,37 +7,37 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   1 .text         00003c54  080000c0  080000c0  000100c0  2**4
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .rodata       00000254  08003d14  08003d14  00013d14  2**0
+  2 .rodata       00000258  08003d14  08003d14  00013d14  2**0
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  3 .init_array   00000004  08003f68  08003f68  00013f68  2**2
+  3 .init_array   00000004  08003f6c  08003f6c  00013f6c  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  4 .fini_array   00000004  08003f6c  08003f6c  00013f6c  2**2
+  4 .fini_array   00000004  08003f70  08003f70  00013f70  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  5 .data         000001dc  20000000  08003f70  00020000  2**2
+  5 .data         000001dc  20000000  08003f74  00020000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  6 .bss          00001024  200001dc  0800414c  000201dc  2**2
+  6 .bss          00001024  200001dc  08004150  000201dc  2**2
                   ALLOC
-  7 ._user_heap_stack 00000600  20001200  0800414c  00021200  2**0
+  7 ._user_heap_stack 00000600  20001200  08004150  00021200  2**0
                   ALLOC
   8 .ARM.attributes 00000028  00000000  00000000  000201dc  2**0
                   CONTENTS, READONLY
-  9 .debug_info   000265e3  00000000  00000000  00020204  2**0
+  9 .debug_info   000265c8  00000000  00000000  00020204  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_abbrev 0000440b  00000000  00000000  000467e7  2**0
+ 10 .debug_abbrev 000043fe  00000000  00000000  000467cc  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    000078df  00000000  00000000  0004abf2  2**0
+ 11 .debug_loc    000078df  00000000  00000000  0004abca  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_aranges 00000cb8  00000000  00000000  000524d8  2**3
+ 12 .debug_aranges 00000cb8  00000000  00000000  000524b0  2**3
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_ranges 000010b0  00000000  00000000  00053190  2**3
+ 13 .debug_ranges 000010b0  00000000  00000000  00053168  2**3
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_line   000097b4  00000000  00000000  00054240  2**0
+ 14 .debug_line   000097b2  00000000  00000000  00054218  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_str    0000478c  00000000  00000000  0005d9f4  2**0
+ 15 .debug_str    0000478c  00000000  00000000  0005d9ca  2**0
                   CONTENTS, READONLY, DEBUGGING
- 16 .comment      0000007c  00000000  00000000  00062180  2**0
+ 16 .comment      0000007c  00000000  00000000  00062156  2**0
                   CONTENTS, READONLY
- 17 .debug_frame  000026b8  00000000  00000000  000621fc  2**2
+ 17 .debug_frame  000026b8  00000000  00000000  000621d4  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -1739,7 +1739,7 @@ uint32_t HAL_RCC_GetSysClockFreq(void)
  8000a3e:	46c0      	nop			; (mov r8, r8)
  8000a40:	40022000 	.word	0x40022000
  8000a44:	40021000 	.word	0x40021000
- 8000a48:	08003e0f 	.word	0x08003e0f
+ 8000a48:	08003e13 	.word	0x08003e13
  8000a4c:	20000008 	.word	0x20000008
  8000a50:	00001388 	.word	0x00001388
  8000a54:	fffff8ff 	.word	0xfffff8ff
@@ -1777,7 +1777,7 @@ uint32_t HAL_RCC_GetPCLK1Freq(void)
 }    
  8000a76:	4770      	bx	lr
  8000a78:	40021000 	.word	0x40021000
- 8000a7c:	08003e1f 	.word	0x08003e1f
+ 8000a7c:	08003e23 	.word	0x08003e23
  8000a80:	20000008 	.word	0x20000008
 
 08000a84 <HAL_RCCEx_PeriphCLKConfig>:
@@ -6911,11 +6911,10 @@ unsigned char UART_SIGFOX_RX_STM( unsigned char * Chr){
 /*Tipo de datos*/
 tipo_t xtypes;
 
-/*Enviar por tx Debug*/
+/*Wrapper para enviar por tx Debug*/
 void PrintString(UART_HandleTypeDef *huart,uint8_t *pData){
  8002624:	b570      	push	{r4, r5, r6, lr}
  8002626:	0005      	movs	r5, r0
-
 	HAL_UART_Transmit(huart,pData,strlen((const char *)(pData) ),500);
  8002628:	0008      	movs	r0, r1
 void PrintString(UART_HandleTypeDef *huart,uint8_t *pData){
@@ -6932,33 +6931,33 @@ void PrintString(UART_HandleTypeDef *huart,uint8_t *pData){
  800263e:	bd70      	pop	{r4, r5, r6, pc}
 
 08002640 <DiscrimateFrameType>:
-/*========================Función decodificar trama de Downlink====================================*/
 DL_Return DiscrimateFrameType(SigfoxConfig_t *obj){
 	uint16_t tempReg;
+	/*frame test Downlink RX=50 00 00 3C 01 00 00 00  Mirar doc frame*/
 
 	/* Discriminate the frame type */
-    switch(obj->DL_NumericFrame[DL_CTRLREG] >> 4){     /* 4 most significant bits */
+	switch(obj->DL_NumericFrame[DL_CTRLREG] >> 4){     /* 4 most significant bits */
  8002640:	0003      	movs	r3, r0
 DL_Return DiscrimateFrameType(SigfoxConfig_t *obj){
  8002642:	b570      	push	{r4, r5, r6, lr}
-    switch(obj->DL_NumericFrame[DL_CTRLREG] >> 4){     /* 4 most significant bits */
+	switch(obj->DL_NumericFrame[DL_CTRLREG] >> 4){     /* 4 most significant bits */
  8002644:	33ec      	adds	r3, #236	; 0xec
  8002646:	781b      	ldrb	r3, [r3, #0]
 DL_Return DiscrimateFrameType(SigfoxConfig_t *obj){
  8002648:	0004      	movs	r4, r0
-    switch(obj->DL_NumericFrame[DL_CTRLREG] >> 4){     /* 4 most significant bits */
+	switch(obj->DL_NumericFrame[DL_CTRLREG] >> 4){     /* 4 most significant bits */
  800264a:	091b      	lsrs	r3, r3, #4
 
-        default:
-        break;
-    }/* End switch */
+	default:
+		break;
+	}/* End switch */
 
-    return DL_SUCCESS;
+	return DL_SUCCESS;
  800264c:	2000      	movs	r0, #0
-    switch(obj->DL_NumericFrame[DL_CTRLREG] >> 4){     /* 4 most significant bits */
+	switch(obj->DL_NumericFrame[DL_CTRLREG] >> 4){     /* 4 most significant bits */
  800264e:	2b05      	cmp	r3, #5
  8002650:	d11a      	bne.n	8002688 <DiscrimateFrameType+0x48>
-            tempReg = (obj->DL_NumericFrame[DL_TREP] << 8) | obj->DL_NumericFrame[DL_TREP + 1]; 	/* junto los 2 bytes en 1*/
+		tempReg = (obj->DL_NumericFrame[DL_TREP] << 8) | obj->DL_NumericFrame[DL_TREP + 1]; 	/* junto los 2 bytes en 1*/
  8002652:	0023      	movs	r3, r4
  8002654:	33ee      	adds	r3, #238	; 0xee
  8002656:	781d      	ldrb	r5, [r3, #0]
@@ -6966,7 +6965,7 @@ DL_Return DiscrimateFrameType(SigfoxConfig_t *obj){
  800265a:	781b      	ldrb	r3, [r3, #0]
  800265c:	022d      	lsls	r5, r5, #8
  800265e:	431d      	orrs	r5, r3
-            HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,obj->DL_NumericFrame[DL_P_ON_OFF] <= 0 ? 0 :1);
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,obj->DL_NumericFrame[DL_P_ON_OFF] <= 0 ? 0 :1);
  8002660:	0023      	movs	r3, r4
  8002662:	33f0      	adds	r3, #240	; 0xf0
  8002664:	781a      	ldrb	r2, [r3, #0]
@@ -6977,20 +6976,20 @@ DL_Return DiscrimateFrameType(SigfoxConfig_t *obj){
  800266e:	b2d2      	uxtb	r2, r2
  8002670:	0089      	lsls	r1, r1, #2
  8002672:	f7fd ff25 	bl	80004c0 <HAL_GPIO_WritePin>
-    return DL_SUCCESS;
+	return DL_SUCCESS;
  8002676:	2000      	movs	r0, #0
-            if(tempReg >= DL_MIN_REPORT_TIME){
+		if(tempReg >= DL_MIN_REPORT_TIME){
  8002678:	2d09      	cmp	r5, #9
  800267a:	d905      	bls.n	8002688 <DiscrimateFrameType+0x48>
-              if(tempReg != obj->UL_ReportTimeS){ /*Si el dato es diferente*/
+			if(tempReg != obj->UL_ReportTimeS){ /*Si el dato es diferente*/
  800267c:	34e8      	adds	r4, #232	; 0xe8
  800267e:	6823      	ldr	r3, [r4, #0]
-            	return DL_TIME_OK;
+			return DL_TIME_OK;
  8002680:	3004      	adds	r0, #4
-              if(tempReg != obj->UL_ReportTimeS){ /*Si el dato es diferente*/
+			if(tempReg != obj->UL_ReportTimeS){ /*Si el dato es diferente*/
  8002682:	429d      	cmp	r5, r3
  8002684:	d000      	beq.n	8002688 <DiscrimateFrameType+0x48>
-            	  obj->UL_ReportTimeS = tempReg;
+				obj->UL_ReportTimeS = tempReg;
  8002686:	6025      	str	r5, [r4, #0]
 }
  8002688:	bd70      	pop	{r4, r5, r6, pc}
@@ -7037,19 +7036,20 @@ uint8_t FSM_Send_Command(uint8_t state, uint8_t *FlagEnd,uint8_t* DowlinkAux, ch
  80026c0:	0004      	movs	r4, r0
  80026c2:	000f      	movs	r7, r1
  80026c4:	0015      	movs	r5, r2
-	char Message[24]="40c72123c29746bc";
+	char Message[24]="40c72123c29746bc";   /*Mensaje fijo Latitud y longitud Medellin, Colombia*/
  80026c6:	4934      	ldr	r1, [pc, #208]	; (8002798 <FSM_Send_Command+0xdc>)
  80026c8:	2211      	movs	r2, #17
  80026ca:	4668      	mov	r0, sp
 uint8_t FSM_Send_Command(uint8_t state, uint8_t *FlagEnd,uint8_t* DowlinkAux, char* x){
  80026cc:	001e      	movs	r6, r3
-	char Message[24]="40c72123c29746bc";
+	char Message[24]="40c72123c29746bc";   /*Mensaje fijo Latitud y longitud Medellin, Colombia*/
  80026ce:	f000 fddb 	bl	8003288 <memcpy>
  80026d2:	2011      	movs	r0, #17
  80026d4:	2207      	movs	r2, #7
  80026d6:	2100      	movs	r1, #0
  80026d8:	4468      	add	r0, sp
  80026da:	f000 fdde 	bl	800329a <memset>
+
 	switch(state){
  80026de:	1e60      	subs	r0, r4, #1
  80026e0:	2804      	cmp	r0, #4
@@ -7079,7 +7079,7 @@ uint8_t FSM_Send_Command(uint8_t state, uint8_t *FlagEnd,uint8_t* DowlinkAux, ch
 		}
 		break;
 	} /*End Switch*/
-return state;
+	return state;
 
 }
  8002704:	0020      	movs	r0, r4
@@ -8028,56 +8028,56 @@ void setTime(uint8_t Hours, uint8_t Minutes, uint8_t Seconds){
  8002bb8:	20000f9c 	.word	0x20000f9c
 
 08002bbc <MX_USART1_UART_Init>:
-	  /* USER CODE END USART1_Init 0 */
+	/* USER CODE END USART1_Init 0 */
 
-	  /* USER CODE BEGIN USART1_Init 1 */
+	/* USER CODE BEGIN USART1_Init 1 */
 
-	  /* USER CODE END USART1_Init 1 */
-	  huart1.Instance = USART1;
+	/* USER CODE END USART1_Init 1 */
+	huart1.Instance = USART1;
  8002bbc:	480b      	ldr	r0, [pc, #44]	; (8002bec <MX_USART1_UART_Init+0x30>)
  8002bbe:	4b0c      	ldr	r3, [pc, #48]	; (8002bf0 <MX_USART1_UART_Init+0x34>)
 {
  8002bc0:	b510      	push	{r4, lr}
-	  huart1.Instance = USART1;
+	huart1.Instance = USART1;
  8002bc2:	6003      	str	r3, [r0, #0]
-	  huart1.Init.BaudRate = 9600;
+	huart1.Init.BaudRate = 9600;
  8002bc4:	2396      	movs	r3, #150	; 0x96
  8002bc6:	019b      	lsls	r3, r3, #6
  8002bc8:	6043      	str	r3, [r0, #4]
-	  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-	  huart1.Init.StopBits = UART_STOPBITS_1;
-	  huart1.Init.Parity = UART_PARITY_NONE;
-	  huart1.Init.Mode = UART_MODE_TX_RX;
+	huart1.Init.WordLength = UART_WORDLENGTH_8B;
+	huart1.Init.StopBits = UART_STOPBITS_1;
+	huart1.Init.Parity = UART_PARITY_NONE;
+	huart1.Init.Mode = UART_MODE_TX_RX;
  8002bca:	220c      	movs	r2, #12
-	  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+	huart1.Init.WordLength = UART_WORDLENGTH_8B;
  8002bcc:	2300      	movs	r3, #0
-	  huart1.Init.Mode = UART_MODE_TX_RX;
+	huart1.Init.Mode = UART_MODE_TX_RX;
  8002bce:	6142      	str	r2, [r0, #20]
-	  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+	huart1.Init.WordLength = UART_WORDLENGTH_8B;
  8002bd0:	6083      	str	r3, [r0, #8]
-	  huart1.Init.StopBits = UART_STOPBITS_1;
+	huart1.Init.StopBits = UART_STOPBITS_1;
  8002bd2:	60c3      	str	r3, [r0, #12]
-	  huart1.Init.Parity = UART_PARITY_NONE;
+	huart1.Init.Parity = UART_PARITY_NONE;
  8002bd4:	6103      	str	r3, [r0, #16]
-	  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+	huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
  8002bd6:	6183      	str	r3, [r0, #24]
-	  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+	huart1.Init.OverSampling = UART_OVERSAMPLING_16;
  8002bd8:	61c3      	str	r3, [r0, #28]
-	  huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+	huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
  8002bda:	6203      	str	r3, [r0, #32]
-	  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+	huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
  8002bdc:	6243      	str	r3, [r0, #36]	; 0x24
-	  if (HAL_UART_Init(&huart1) != HAL_OK)
+	if (HAL_UART_Init(&huart1) != HAL_OK)
  8002bde:	f7fe fb57 	bl	8001290 <HAL_UART_Init>
  8002be2:	2800      	cmp	r0, #0
  8002be4:	d001      	beq.n	8002bea <MX_USART1_UART_Init+0x2e>
-	  {
-	    Error_Handler();
+	{
+		Error_Handler();
  8002be6:	f000 fa07 	bl	8002ff8 <Error_Handler>
-	  }
-	  /* USER CODE BEGIN USART1_Init 2 */
+	}
+	/* USER CODE BEGIN USART1_Init 2 */
 
-	  /* USER CODE END USART1_Init 2 */
+	/* USER CODE END USART1_Init 2 */
 
 }
  8002bea:	bd10      	pop	{r4, pc}
@@ -8085,56 +8085,56 @@ void setTime(uint8_t Hours, uint8_t Minutes, uint8_t Seconds){
  8002bf0:	40013800 	.word	0x40013800
 
 08002bf4 <MX_USART2_UART_Init>:
-	  /* USER CODE END USART2_Init 0 */
+	/* USER CODE END USART2_Init 0 */
 
-	  /* USER CODE BEGIN USART2_Init 1 */
+	/* USER CODE BEGIN USART2_Init 1 */
 
-	  /* USER CODE END USART2_Init 1 */
-	  huart2.Instance = USART2;
+	/* USER CODE END USART2_Init 1 */
+	huart2.Instance = USART2;
  8002bf4:	480b      	ldr	r0, [pc, #44]	; (8002c24 <MX_USART2_UART_Init+0x30>)
  8002bf6:	4b0c      	ldr	r3, [pc, #48]	; (8002c28 <MX_USART2_UART_Init+0x34>)
 {
  8002bf8:	b510      	push	{r4, lr}
-	  huart2.Instance = USART2;
+	huart2.Instance = USART2;
  8002bfa:	6003      	str	r3, [r0, #0]
-	  huart2.Init.BaudRate = 9600;
+	huart2.Init.BaudRate = 9600;
  8002bfc:	2396      	movs	r3, #150	; 0x96
  8002bfe:	019b      	lsls	r3, r3, #6
  8002c00:	6043      	str	r3, [r0, #4]
-	  huart2.Init.WordLength = UART_WORDLENGTH_8B;
-	  huart2.Init.StopBits = UART_STOPBITS_1;
-	  huart2.Init.Parity = UART_PARITY_NONE;
-	  huart2.Init.Mode = UART_MODE_TX_RX;
+	huart2.Init.WordLength = UART_WORDLENGTH_8B;
+	huart2.Init.StopBits = UART_STOPBITS_1;
+	huart2.Init.Parity = UART_PARITY_NONE;
+	huart2.Init.Mode = UART_MODE_TX_RX;
  8002c02:	220c      	movs	r2, #12
-	  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+	huart2.Init.WordLength = UART_WORDLENGTH_8B;
  8002c04:	2300      	movs	r3, #0
-	  huart2.Init.Mode = UART_MODE_TX_RX;
+	huart2.Init.Mode = UART_MODE_TX_RX;
  8002c06:	6142      	str	r2, [r0, #20]
-	  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+	huart2.Init.WordLength = UART_WORDLENGTH_8B;
  8002c08:	6083      	str	r3, [r0, #8]
-	  huart2.Init.StopBits = UART_STOPBITS_1;
+	huart2.Init.StopBits = UART_STOPBITS_1;
  8002c0a:	60c3      	str	r3, [r0, #12]
-	  huart2.Init.Parity = UART_PARITY_NONE;
+	huart2.Init.Parity = UART_PARITY_NONE;
  8002c0c:	6103      	str	r3, [r0, #16]
-	  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+	huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
  8002c0e:	6183      	str	r3, [r0, #24]
-	  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+	huart2.Init.OverSampling = UART_OVERSAMPLING_16;
  8002c10:	61c3      	str	r3, [r0, #28]
-	  huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+	huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
  8002c12:	6203      	str	r3, [r0, #32]
-	  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+	huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
  8002c14:	6243      	str	r3, [r0, #36]	; 0x24
-	  if (HAL_UART_Init(&huart2) != HAL_OK)
+	if (HAL_UART_Init(&huart2) != HAL_OK)
  8002c16:	f7fe fb3b 	bl	8001290 <HAL_UART_Init>
  8002c1a:	2800      	cmp	r0, #0
  8002c1c:	d001      	beq.n	8002c22 <MX_USART2_UART_Init+0x2e>
-	  {
-	    Error_Handler();
+	{
+		Error_Handler();
  8002c1e:	f000 f9eb 	bl	8002ff8 <Error_Handler>
-	  }
-	  /* USER CODE BEGIN USART2_Init 2 */
+	}
+	/* USER CODE BEGIN USART2_Init 2 */
 
-	  /* USER CODE END USART2_Init 2 */
+	/* USER CODE END USART2_Init 2 */
 }
  8002c22:	bd10      	pop	{r4, pc}
  8002c24:	20001168 	.word	0x20001168
@@ -8142,7 +8142,7 @@ void setTime(uint8_t Hours, uint8_t Minutes, uint8_t Seconds){
 
 08002c2c <HAL_UART_RxCpltCallback>:
  ===================================================================================
-*/
+ */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 	UBaseType_t uxSavedInterruptStatus;
 
@@ -8184,7 +8184,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
  8002c62:	6818      	ldr	r0, [r3, #0]
  8002c64:	f7fe ff79 	bl	8001b5a <xQueueGiveFromISR>
 	}
-  /* If xHigherPriorityTaskWoken was set to true you we should yield.  The actual macro used here is    port specific. */
+	/* If xHigherPriorityTaskWoken was set to true you we should yield.  The actual macro used here is    port specific. */
 	if(xHigherPriorityTaskWoken) portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
  8002c68:	682b      	ldr	r3, [r5, #0]
  8002c6a:	2b00      	cmp	r3, #0
@@ -8483,7 +8483,7 @@ void TaskFSM( void* taskParmPtr){
  8002e38:	08003d9f 	.word	0x08003d9f
  8002e3c:	48000800 	.word	0x48000800
  8002e40:	200010d8 	.word	0x200010d8
- 8002e44:	08003dc8 	.word	0x08003dc8
+ 8002e44:	08003dcc 	.word	0x08003dcc
  8002e48:	20000fb0 	.word	0x20000fb0
  8002e4c:	20000fa4 	.word	0x20000fa4
  8002e50:	20000fa0 	.word	0x20000fa0
@@ -8527,7 +8527,7 @@ void TaskDL_DecoFrame ( void* taskParmPtr){
  8002e9a:	0020      	movs	r0, r4
  8002e9c:	f7ff fbf8 	bl	8002690 <UartprotectedMutex>
  8002ea0:	e7dd      	b.n	8002e5e <TaskDL_DecoFrame+0x2>
-			UartprotectedMutex(&huart2,SemUart, (uint8_t*)"Downlink Timeout  or bad Frame\r\n");
+			UartprotectedMutex(&huart2,SemUart, (uint8_t*)"Downlink Timeout  or Non Downlink \r\n");
  8002ea2:	4a0c      	ldr	r2, [pc, #48]	; (8002ed4 <TaskDL_DecoFrame+0x78>)
  8002ea4:	6829      	ldr	r1, [r5, #0]
  8002ea6:	0020      	movs	r0, r4
@@ -8557,13 +8557,13 @@ void TaskDL_DecoFrame ( void* taskParmPtr){
  8002ede:	f7fd f9cd 	bl	800027c <HAL_Init>
 	SystemClock_Config();
  8002ee2:	f7ff fed7 	bl	8002c94 <SystemClock_Config>
-	MX_GPIO_Init();
+	MX_GPIO_Init();   		 /*Inicializo GPIO STM32*/
  8002ee6:	f7ff fd2b 	bl	8002940 <MX_GPIO_Init>
-	MX_RTC_Init();
+	MX_RTC_Init();   		 /*Inicializo tiempos del RTC para despertar por tiempos ->> ReportTimeSecond*/
  8002eea:	f7ff fe17 	bl	8002b1c <MX_RTC_Init>
-	MX_USART1_UART_Init();
+	MX_USART1_UART_Init();	  /*Iincializo Uart1 para Sigfox , 9600 baudios*/
  8002eee:	f7ff fe65 	bl	8002bbc <MX_USART1_UART_Init>
-	MX_USART2_UART_Init();
+	MX_USART2_UART_Init();   /*Iincializo Uart2 para Debug, 9600 baudios*/
  8002ef2:	f7ff fe7f 	bl	8002bf4 <MX_USART2_UART_Init>
 	HAL_UART_Receive_IT(&huart1,(uint8_t *)&UART_RX.Data,USART_RX_AMOUNT_BYTES);
  8002ef6:	2201      	movs	r2, #1
@@ -8659,12 +8659,12 @@ void TaskDL_DecoFrame ( void* taskParmPtr){
  8002fa4:	200011f9 	.word	0x200011f9
  8002fa8:	200010f8 	.word	0x200010f8
  8002fac:	20000fcc 	.word	0x20000fcc
- 8002fb0:	08003df2 	.word	0x08003df2
+ 8002fb0:	08003df6 	.word	0x08003df6
  8002fb4:	08002d79 	.word	0x08002d79
- 8002fb8:	08003dfa 	.word	0x08003dfa
+ 8002fb8:	08003dfe 	.word	0x08003dfe
  8002fbc:	08002d11 	.word	0x08002d11
  8002fc0:	20000fb4 	.word	0x20000fb4
- 8002fc4:	08003e05 	.word	0x08003e05
+ 8002fc4:	08003e09 	.word	0x08003e09
  8002fc8:	08002e5d 	.word	0x08002e5d
  8002fcc:	08002641 	.word	0x08002641
  8002fd0:	20000fe0 	.word	0x20000fe0
@@ -9266,7 +9266,7 @@ LoopForever:
   ldr r1, =_edata
  800322c:	200001dc 	.word	0x200001dc
   ldr r2, =_sidata
- 8003230:	08003f70 	.word	0x08003f70
+ 8003230:	08003f74 	.word	0x08003f74
   ldr r2, =_sbss
  8003234:	200001dc 	.word	0x200001dc
   ldr r4, =_ebss
@@ -9310,10 +9310,10 @@ Infinite_Loop:
  8003272:	4798      	blx	r3
  8003274:	3601      	adds	r6, #1
  8003276:	e7f2      	b.n	800325e <__libc_init_array+0x1e>
- 8003278:	08003f68 	.word	0x08003f68
- 800327c:	08003f68 	.word	0x08003f68
- 8003280:	08003f68 	.word	0x08003f68
- 8003284:	08003f6c 	.word	0x08003f6c
+ 8003278:	08003f6c 	.word	0x08003f6c
+ 800327c:	08003f6c 	.word	0x08003f6c
+ 8003280:	08003f6c 	.word	0x08003f6c
+ 8003284:	08003f70 	.word	0x08003f70
 
 08003288 <memcpy>:
  8003288:	2300      	movs	r3, #0
@@ -9962,9 +9962,9 @@ Infinite_Loop:
  8003788:	f000 f87a 	bl	8003880 <_printf_i>
  800378c:	e7ea      	b.n	8003764 <_svfiprintf_r+0x1c8>
  800378e:	46c0      	nop			; (mov r8, r8)
- 8003790:	08003e31 	.word	0x08003e31
- 8003794:	08003e37 	.word	0x08003e37
- 8003798:	08003e3b 	.word	0x08003e3b
+ 8003790:	08003e35 	.word	0x08003e35
+ 8003794:	08003e3b 	.word	0x08003e3b
+ 8003798:	08003e3f 	.word	0x08003e3f
  800379c:	00000000 	.word	0x00000000
  80037a0:	080034d9 	.word	0x080034d9
 
@@ -10355,8 +10355,8 @@ Infinite_Loop:
  8003aa6:	4240      	negs	r0, r0
  8003aa8:	b00b      	add	sp, #44	; 0x2c
  8003aaa:	bdf0      	pop	{r4, r5, r6, r7, pc}
- 8003aac:	08003e53 	.word	0x08003e53
- 8003ab0:	08003e42 	.word	0x08003e42
+ 8003aac:	08003e57 	.word	0x08003e57
+ 8003ab0:	08003e46 	.word	0x08003e46
 
 08003ab4 <__ascii_wctomb>:
  8003ab4:	1e0b      	subs	r3, r1, #0

@@ -3,8 +3,8 @@ Globals.c:38:6:RST2Ctrl_Sigfox	8	static
 Globals.c:44:6:UART_DEBUG	0	static
 Globals.c:49:6:UART_SIGFOX_TX_STM	16	static
 Globals.c:54:15:UART_SIGFOX_RX_STM	0	static
-Globals.c:69:6:PrintString	16	static
-Globals.c:75:6:PrintStringVar	32	dynamic
-Globals.c:87:11:DiscrimateFrameType	16	static
-Globals.c:114:6:UartprotectedMutex	16	static
-Globals.c:122:9:FSM_Send_Command	48	static
+Globals.c:66:6:PrintString	16	static
+Globals.c:71:6:PrintStringVar	32	dynamic
+Globals.c:83:11:DiscrimateFrameType	16	static
+Globals.c:111:6:UartprotectedMutex	16	static
+Globals.c:119:9:FSM_Send_Command	48	static

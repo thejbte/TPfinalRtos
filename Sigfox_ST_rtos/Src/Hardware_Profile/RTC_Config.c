@@ -72,6 +72,7 @@ void MX_RTC_Init(void)
 	  /**Enable the Alarm A
 	  */
 	  /*H:0-23 , M: 0-59 S: 0-59*/
+	  /*Sale del modo de bajo consumo cada 3 minutos */
 	   ReportTimeMinute = 3;
 
 	   setTime(ReportTimeHour,ReportTimeMinute,ReportTimeSecond); //SigfoxModule.UL_ReportTimeS);

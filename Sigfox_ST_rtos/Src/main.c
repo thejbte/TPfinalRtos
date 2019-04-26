@@ -32,7 +32,7 @@ int main(void)
 
 	/* USER CODE BEGIN 2 */
 	MX_GPIO_Init();   		 /*Inicializo GPIO STM32*/
-	MX_RTC_Init();   		 /*Inicializo tiempos del RTC para despertar*/
+	MX_RTC_Init();   		 /*Inicializo tiempos del RTC para despertar por tiempos ->> ReportTimeSecond*/
 	MX_USART1_UART_Init();	  /*Iincializo Uart1 para Sigfox , 9600 baudios*/
 	MX_USART2_UART_Init();   /*Iincializo Uart2 para Debug, 9600 baudios*/
 	HAL_UART_Receive_IT(&huart1,(uint8_t *)&UART_RX.Data,USART_RX_AMOUNT_BYTES);
@@ -96,6 +96,7 @@ void TaskFSM( void* taskParmPtr){
 	static uint8_t FlagEnd = 0;
 
 	char  x[32] ="AT\r" ;
+	/*Downlink modificar en 1 si quiere pedir un mensaje de bajada, tiempo de espera alrededor de 45s*/
 	static uint8_t DowlinkAux = 0 ;
 	for(;;){
 
@@ -148,7 +149,7 @@ void TaskDL_DecoFrame ( void* taskParmPtr){
 			UartprotectedMutex(&huart2,SemUart,(uint8_t*)"Si paso esto el uC no entro en modo Sleep\r\n");
 		}
 		else{
-			UartprotectedMutex(&huart2,SemUart, (uint8_t*)"Downlink Timeout  or bad Frame\r\n");
+			UartprotectedMutex(&huart2,SemUart, (uint8_t*)"Downlink Timeout  or Non Downlink \r\n");
 			/*Entro en modo de bajo consumo, si la trama de Downlink esta mal*/
 			RTC_WakeUp_Clear_Flag(&hrtc);
 			Standby_Mode_Entry();
